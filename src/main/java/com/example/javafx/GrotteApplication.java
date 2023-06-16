@@ -75,24 +75,20 @@ public class GrotteApplication extends Application {
 
                             for (int j = 0; j < rows; j++) {
                                 for (int i = 0; i < columns; i++) {
-                                    Pane pane = new Pane();
-
                                     // spawn/fall water drop
                                     if (j == 0) {
 //                                        Circle circle = new Circle(40, 40f, 7);
 //                                        circle.setFill(Color.RED);
 //                                        gridpane.add(circle, i, j);
                                         if (i == waterDropSpawnColumn) {
-                                            System.out.println("test");
-                                            Rectangle rectangle = new Rectangle(40, 40);
-                                            rectangle.setStroke(Paint.valueOf("white"));
-                                            rectangle.setFill(Paint.valueOf("steelblue"));
+                                            Node node = getNodeFromGridPane(gridpane, i, 0);
 
-                                            pane.getChildren().add(rectangle);
-                                            gridpane.add(pane, i, 0);
-
-                                            if(getNodeFromGridPane(gridpane, i, 0) != null) {
-
+                                            if(getNodeFromGridPane(gridpane, i, 0) == null) {
+                                                createRectangle("state1", "green", i, 0, gridpane);
+                                            } else {
+                                                if(node.getId() == "state1") {
+                                                    createRectangle("state2", "yellow", i, 0, gridpane);
+                                                }
                                             }
 
                                             break;
@@ -120,11 +116,23 @@ public class GrotteApplication extends Application {
         for (Node node : childrens) {
             if (node instanceof Node && GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row) {
                 result = node;
-                System.out.print(node);
                 break;
             }
         }
         return result;
+    }
+
+    private void createRectangle(String state, String color, Integer column, Integer row, GridPane gridPane) {
+        Pane pane = new Pane();
+
+        pane.setId(state);
+        Rectangle r2 = new Rectangle(40, 40);
+        r2.setStroke(Paint.valueOf("white"));
+        r2.setFill(Paint.valueOf(color));
+
+        pane.getChildren().add(r2);
+
+        gridPane.add(pane, column, row);
     }
 
     public static void main(String[] args) {
