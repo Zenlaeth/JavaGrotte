@@ -3,6 +3,7 @@ package com.example.javafx;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -45,16 +46,16 @@ public class GrotteApplication extends Application {
         // set style grid
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
-                Pane pane = new Pane();
-                pane.getStyleClass().add("game-grid-cell");
-                if (i == 0) {
-                    pane.getStyleClass().add("first-column");
-                }
-                if (j == 0) {
-                    pane.getStyleClass().add("first-row");
-                }
-
-                gridpane.add(pane, i, j);
+//                Pane pane = new Pane();
+//                pane.getStyleClass().add("game-grid-cell");
+//                if (i == 0) {
+//                    pane.getStyleClass().add("first-column");
+//                }
+//                if (j == 0) {
+//                    pane.getStyleClass().add("first-row");
+//                }
+//
+//                gridpane.add(pane, i, j);
             }
         }
 
@@ -89,6 +90,11 @@ public class GrotteApplication extends Application {
 
                                             pane.getChildren().add(rectangle);
                                             gridpane.add(pane, i, 0);
+
+                                            if(getNodeFromGridPane(gridpane, i, 0) != null) {
+
+                                            }
+
                                             break;
                                         }
                                     }
@@ -105,6 +111,20 @@ public class GrotteApplication extends Application {
 
         System.out.println(randomNum);
         return randomNum;
+    }
+
+    private Node getNodeFromGridPane(GridPane gridPane, int col, int row) {
+        Node result = null;
+        ObservableList<Node> childrens = gridPane.getChildren();
+
+        for (Node node : childrens) {
+            if (node instanceof Node && GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row) {
+                result = node;
+                System.out.print(node);
+                break;
+            }
+        }
+        return result;
     }
 
     public static void main(String[] args) {
