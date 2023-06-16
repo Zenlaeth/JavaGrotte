@@ -71,7 +71,6 @@ public class GrotteApplication extends Application {
                         event -> {
                             System.out.println("this is called every 5 seconds on UI thread");
                             int waterDropSpawnColumn = waterDropSpawnColumn();
-                            System.out.println(waterDropSpawnColumn);
 
                             for (int j = 0; j < rows; j++) {
                                 for (int i = 0; i < columns; i++) {
@@ -86,8 +85,12 @@ public class GrotteApplication extends Application {
                                             if(getNodeFromGridPane(gridpane, i, 0) == null) {
                                                 createRectangle("state1", "green", i, 0, gridpane);
                                             } else {
+                                                System.out.println(i);
+                                                System.out.println(node.getId());
                                                 if(node.getId() == "state1") {
                                                     createRectangle("state2", "yellow", i, 0, gridpane);
+                                                } else if (node.getId() == "state2") {
+                                                    node.relocate(i, columns - 1);
                                                 }
                                             }
 
@@ -105,7 +108,6 @@ public class GrotteApplication extends Application {
         Random rand = new Random();
         int randomNum = rand.nextInt(((columns - 1) - 0) + 1) + 0;
 
-        System.out.println(randomNum);
         return randomNum;
     }
 
@@ -123,16 +125,12 @@ public class GrotteApplication extends Application {
     }
 
     private void createRectangle(String state, String color, Integer column, Integer row, GridPane gridPane) {
-        Pane pane = new Pane();
+        Rectangle r = new Rectangle(40, 40);
+        r.setId(state);
+        r.setStroke(Paint.valueOf("white"));
+        r.setFill(Paint.valueOf(color));
 
-        pane.setId(state);
-        Rectangle r2 = new Rectangle(40, 40);
-        r2.setStroke(Paint.valueOf("white"));
-        r2.setFill(Paint.valueOf(color));
-
-        pane.getChildren().add(r2);
-
-        gridPane.add(pane, column, row);
+        gridPane.add(r, column, row);
     }
 
     public static void main(String[] args) {
