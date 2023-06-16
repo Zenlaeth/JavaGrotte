@@ -67,7 +67,7 @@ public class GrotteApplication extends Application {
 
         // infinite loop
         Timeline fiveSecondsWonder = new Timeline(
-                new KeyFrame(Duration.seconds(5),
+                new KeyFrame(Duration.seconds(1),
                         event -> {
                             System.out.println("this is called every 5 seconds on UI thread");
                             int waterDropSpawnColumn = waterDropSpawnColumn();
@@ -83,13 +83,15 @@ public class GrotteApplication extends Application {
                                             Node node = getNodeFromGridPane(gridpane, i, 0);
 
                                             if(getNodeFromGridPane(gridpane, i, 0) == null) {
-                                                createRectangle("state1", "green", i, 0, gridpane);
+                                                createRectangle("state1", Color.GREEN, i, 0, gridpane);
                                             } else {
-                                                System.out.println(i);
-                                                System.out.println(node.getId());
-                                                if(node.getId() == "state1") {
-                                                    createRectangle("state2", "yellow", i, 0, gridpane);
-                                                } else if (node.getId() == "state2") {
+                                                Rectangle rec = (Rectangle) node;
+
+                                                System.out.println();
+
+                                                if(rec.getFill().equals(Color.GREEN)) {
+                                                    rec.setFill(Color.YELLOW);
+                                                } else if (rec.getFill().equals(Color.YELLOW)) {
                                                     node.relocate(i, columns - 1);
                                                 }
                                             }
@@ -118,19 +120,20 @@ public class GrotteApplication extends Application {
         for (Node node : childrens) {
             if (node instanceof Node && GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row) {
                 result = node;
+                System.out.println(result);
                 break;
             }
         }
         return result;
     }
 
-    private void createRectangle(String state, String color, Integer column, Integer row, GridPane gridPane) {
-        Rectangle r = new Rectangle(40, 40);
-        r.setId(state);
-        r.setStroke(Paint.valueOf("white"));
-        r.setFill(Paint.valueOf(color));
+    private void createRectangle(String state, Color color, Integer column, Integer row, GridPane gridPane) {
+        Rectangle rec = new Rectangle(40, 40);
+        rec.setId(state);
+        rec.setStroke(Paint.valueOf("white"));
+        rec.setFill(Paint.valueOf(color.toString()));
 
-        gridPane.add(r, column, row);
+        gridPane.add(rec, column, row);
     }
 
     public static void main(String[] args) {
