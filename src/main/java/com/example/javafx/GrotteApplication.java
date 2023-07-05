@@ -2,6 +2,7 @@ package com.example.javafx;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,8 +25,10 @@ import java.util.Random;
 
 public class GrotteApplication extends Application {
 
-    private Integer rows = 5;
-    private Integer columns = 5;
+    private Integer rows = 20;
+    private Integer rowsSize = rows - 1;
+    private Integer columns = 20;
+    private Integer columnsSize = columns - 1;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -67,36 +70,23 @@ public class GrotteApplication extends Application {
 
         // infinite loop
         Timeline fiveSecondsWonder = new Timeline(
-                new KeyFrame(Duration.seconds(1),
+                new KeyFrame(Duration.seconds(0.2),
                         event -> {
-                            System.out.println("this is called every 5 seconds on UI thread");
+                            // spawn/fall water drop
                             int waterDropSpawnColumn = waterDropSpawnColumn();
 
-                            for (int j = 0; j < rows; j++) {
-                                for (int i = 0; i < columns; i++) {
-                                    // spawn/fall water drop
-                                    if (j == 0) {
-//                                        Circle circle = new Circle(40, 40f, 7);
-//                                        circle.setFill(Color.RED);
-//                                        gridpane.add(circle, i, j);
-                                        if (i == waterDropSpawnColumn) {
-                                            Node node = getNodeFromGridPane(gridpane, i, 0);
+                            for (int y = 0; y < columns; y++) {
+                                if (y == waterDropSpawnColumn) {
+                                    // base rec
+                                    waterDropAnimation(0, y, gridpane);
 
-                                            if(getNodeFromGridPane(gridpane, i, 0) == null) {
-                                                createRectangle("state1", Color.GREEN, i, 0, gridpane);
-                                            } else {
-                                                Rectangle rec = (Rectangle) node;
+                                    // construct stalactite
+                                    for (int x = 0; x < rows; x++) {
+                                        Node upperNode = getNodeFromGridPane(gridpane, y, x - 1);
+                                        Rectangle upperRec = (Rectangle) upperNode;
 
-                                                System.out.println();
-
-                                                if(rec.getFill().equals(Color.GREEN)) {
-                                                    rec.setFill(Color.YELLOW);
-                                                } else if (rec.getFill().equals(Color.YELLOW)) {
-                                                    node.relocate(i, columns - 1);
-                                                }
-                                            }
-
-                                            break;
+                                        if(upperRec != null && upperRec.getFill().equals(Color.GREY)) {
+                                            waterDropAnimation(x, y, gridpane);
                                         }
                                     }
                                 }
@@ -108,7 +98,7 @@ public class GrotteApplication extends Application {
 
     public int waterDropSpawnColumn() {
         Random rand = new Random();
-        int randomNum = rand.nextInt(((columns - 1) - 0) + 1) + 0;
+        int randomNum = rand.nextInt(((columnsSize) - 0) + 1) + 0;
 
         return randomNum;
     }
@@ -120,20 +110,36 @@ public class GrotteApplication extends Application {
         for (Node node : childrens) {
             if (node instanceof Node && GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row) {
                 result = node;
-                System.out.println(result);
                 break;
             }
         }
         return result;
     }
 
-    private void createRectangle(String state, Color color, Integer column, Integer row, GridPane gridPane) {
+    private void createRectangle(Color color, Integer column, Integer row, GridPane gridPane) {
         Rectangle rec = new Rectangle(40, 40);
-        rec.setId(state);
         rec.setStroke(Paint.valueOf("white"));
         rec.setFill(Paint.valueOf(color.toString()));
 
         gridPane.add(rec, column, row);
+    }
+
+    private void waterDropAnimation(Integer x, Integer y, GridPane gridpane) {
+        Node node = getNodeFromGridPane(gridpane, y, x);
+        Rectangle rec = (Rectangle) node;
+
+        if(rec == null) {
+            createRectangle(Color.GREEN, y, x, gridpane);
+        } else {
+            if(rec.getFill().equals(Color.GREEN)) {
+                rec.setFill(Color.YELLOW);
+            } else if (rec.getFill().equals(Color.YELLOW)) {
+                rec.setFill(Color.GREY);
+
+                // water drop fall
+                createRectangle(Color.GREY, y, rowsSize - x, gridpane);
+            }
+        }
     }
 
     public static void main(String[] args) {
